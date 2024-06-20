@@ -1,0 +1,24 @@
+{
+  "name": "jsconf-budapest-2024-either",
+  "version": "0.0.1",
+  "description": "Cases for talk at JSConf Budapest 2024",
+  "main": "src/main.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Artem and Dmitry",
+  "license": "UNLECENSED",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:DmitryMakhnev/JSConf-Budapest-2024-demo.git"
+  },
+  "dependencies": {
+    "@renderilnik/core": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/assert": "^1.4.3",
+    "@types/mocha": "^5.2.7",
+    "mocha": "^10.1.0",
+    "typescript": "^5.4.5"
+  }
+}
