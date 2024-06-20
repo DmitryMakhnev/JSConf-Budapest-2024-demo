@@ -1,4 +1,6 @@
 import { Dependency, Injectable } from '@renderilnik/core';
+import { Failed } from '../exceptions/containers/Failed';
+import { Ok } from '../exceptions/containers/Ok';
 import { AuthorizationException } from '../exceptions/AuthorizationException';
 import { UserService } from './UserService';
 
@@ -8,12 +10,15 @@ export class AuthorizationService {
   @Dependency
   private userService!: UserService;
 
-  async checkAuthorization(): Promise<[ void ] | [null, AuthorizationException]> {
-    const [user, exception] = await this.userService.getUser();
-    if (exception != null || user == null) {
-      return [null, new AuthorizationException(`Can't authorize user`)];
-    }
-    return [undefined];
+  checkAuthorization(): Promise<Ok<void> | Failed<AuthorizationException>> {
+    return this.userService
+      .getUser()
+      .then(
+        result =>
+          result instanceof Failed
+            ? new Failed(new AuthorizationException(`Can't authorize user`))
+            : undefined
+      )
   }
 
 }

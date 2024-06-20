@@ -1,4 +1,6 @@
 import { Dependency, Injectable } from '@renderilnik/core';
+import { Failed } from '../exceptions/containers/Failed';
+import { Ok } from '../exceptions/containers/Ok';
 import { UserException } from '../exceptions/UserException';
 import { ApiService } from './api/ApiService';
 import { UserApiModel } from './api/ApiTypings';
@@ -9,12 +11,15 @@ export class UserService {
   @Dependency
   private apiService!: ApiService;
 
-  async getUser(): Promise<[UserApiModel] | [null, UserException]>{
-    const [user, exception] = await this.apiService.get('/user');
-    if (exception != null || user == null) {
-      return [null, new UserException('User not found')];
-    }
-    return [user];
+  getUser(): Promise<Ok<UserApiModel> | Failed<UserException>>{
+    return this.apiService
+      .get('/user')
+      .then(
+        result =>
+          result instanceof Failed
+            ? new Failed(new UserException('User not found'))
+            : result
+      );
   }
 
 }
