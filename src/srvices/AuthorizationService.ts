@@ -8,15 +8,12 @@ export class AuthorizationService {
   @Dependency
   private userService!: UserService;
 
-  checkAuthorization(
-    cb: (exception: AuthorizationException | null, isAuthorized?: boolean) => void
-  ) {
-    this.userService.getUser((exception, user) => {
-      if (exception != null) {
-        return cb(new AuthorizationException(`Can't authorize user`));
-      }
-      cb(null, user != null);
-    });
+  async checkAuthorization(): Promise<[ void ] | [null, AuthorizationException]> {
+    const [user, exception] = await this.userService.getUser();
+    if (exception != null || user == null) {
+      return [null, new AuthorizationException(`Can't authorize user`)];
+    }
+    return [undefined];
   }
 
 }

@@ -9,15 +9,12 @@ export class UserService {
   @Dependency
   private apiService!: ApiService;
 
-  getUser(
-    cb: (exception: UserException | null, user?: UserApiModel) => void
-  ) {
-    this.apiService.get('/user', (exception, user) => {
-      if (exception != null) {
-        return cb(new UserException('User not found'));
-      }
-      cb(null, user);
-    });
+  async getUser(): Promise<[UserApiModel] | [null, UserException]>{
+    const [user, exception] = await this.apiService.get('/user');
+    if (exception != null || user == null) {
+      return [null, new UserException('User not found')];
+    }
+    return [user];
   }
 
 }
