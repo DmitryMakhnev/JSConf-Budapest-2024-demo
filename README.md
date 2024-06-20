@@ -2,4 +2,4 @@
 
 > Please go to the last commit to view the full content.
 
-Stage: feat(ErrorHandling): `Ok` and `Failed`.
+Stage: feat(ErrorHandling): Either style.

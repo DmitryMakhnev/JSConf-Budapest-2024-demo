@@ -1,6 +1,4 @@
 import { AbstractComponent, Dependency } from '@renderilnik/core';
-import { Failed } from '../exceptions/containers/Failed';
-import { Ok } from '../exceptions/containers/Ok';
 import { AuthorizationService } from '../srvices/AuthorizationService';
 
 export class LoginComponent extends AbstractComponent {
@@ -13,13 +11,14 @@ export class LoginComponent extends AbstractComponent {
 
   async getData(): Promise<void> {
     this.isLoading = true;
-    const authCheckResult = await this.authorizationService.checkAuthorization();
-    this.isLoggedIn = authCheckResult instanceof Ok;
-    if (authCheckResult instanceof Failed) {
-      const e = authCheckResult.exception;
-      console.log(`[${e.name}]: ${e.message}`);
-    }
+    const maybeAuthorized = await this.authorizationService.checkAuthorization();
+    this.isLoggedIn = maybeAuthorized.isRight();
     this.isLoading = false;
+
+    // checking
+    maybeAuthorized.mapLeft(e => {
+      console.log(`[${e.name}]: ${e.message}`);
+    });
   }
 
   render(): string {
