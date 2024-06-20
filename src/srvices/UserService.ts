@@ -1,7 +1,7 @@
 import { Dependency, Injectable } from '@renderilnik/core';
-import { NetworkException } from '../exceptions/NetworkException';
 import { UserException } from '../exceptions/UserException';
 import { ApiService } from './api/ApiService';
+import { UserApiModel } from './api/ApiTypings';
 
 @Injectable
 export class UserService {
@@ -9,15 +9,15 @@ export class UserService {
   @Dependency
   private apiService!: ApiService;
 
-  async getUser() {
-    try {
-      return await this.apiService.get('/user');
-    } catch (e) {
-      if (e instanceof NetworkException) {
-        throw new UserException('User not found');
+  getUser(
+    cb: (exception: UserException | null, user?: UserApiModel) => void
+  ) {
+    this.apiService.get('/user', (exception, user) => {
+      if (exception != null) {
+        return cb(new UserException('User not found'));
       }
-      throw e;
-    }
+      cb(null, user);
+    });
   }
 
 }

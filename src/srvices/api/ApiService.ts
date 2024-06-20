@@ -6,12 +6,16 @@ import { ApiResponsesMapping, ApiRotes } from "./ApiTypings";
 @Injectable
 export class ApiService {
 
-  async get<T extends ApiRotes>(route: T): Promise<ApiResponsesMapping[T]> {
+  async get<T extends ApiRotes>(
+    route: T,
+    cb: (exception: NetworkException | null, result?: ApiResponsesMapping[T]) => void
+  ) {
     try {
-      return await fetch(route);
+      const data = await fetch(route);
+      cb(null, data);
     } catch (e) {
       if (e instanceof Error) {
-        throw new NetworkException(e.message);
+        return cb(new NetworkException(e.message));
       }
       throw e;
     }
