@@ -1,20 +1,29 @@
 import { AbstractComponent, Dependency } from '@renderilnik/core';
 import { AuthorizationService } from '../srvices/AuthorizationService';
+import {UserService} from '../srvices/UserService';
 
 export class LoginComponent extends AbstractComponent {
 
   @Dependency
   private authorizationService!: AuthorizationService;
 
+  @Dependency
+  private userService!: UserService;
+
   isLoading = false;
   isLoggedIn = false;
 
   async getData(): Promise<void> {
     this.isLoading = true;
-    const [, exception] = await this.authorizationService.checkAuthorization();
-    this.isLoggedIn = exception == null;
-    if (exception != null) {
-      console.log(`[${exception.name}]: ${exception.message}`);
+    const [, exception1] = await this.authorizationService.checkAuthorization();
+    const [, exception2] = await this.userService.getUser();
+
+    this.isLoggedIn = exception1 == null && exception2 == null;
+    if (exception1 != null) {
+      console.log(`[${exception1.name}]: ${exception1.message}`);
+    }
+    if (exception2 != null) {
+      console.log(`[${exception2.name}]: ${exception2.message}`);
     }
     this.isLoading = false;
   }
